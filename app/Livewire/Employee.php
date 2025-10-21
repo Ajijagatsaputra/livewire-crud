@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Livewire;
+
+use App\Models\Employee as ModelsEmployee;
+use Livewire\Component;
+use Livewire\WithPagination;
+
+class Employee extends Component
+{
+    use WithPagination;
+    protected $paginationTheme = 'bootstrap';
+
+    public $nama;
+    public $email;
+    public $alamat;
+
+
+    public function store()
+    {
+        $rules = [
+            'nama' => 'required',
+            'email' => 'required|email',
+            'alamat' => 'required',
+        ];
+        $pesan = [
+            'nama.required' => 'Nama wajib diisi',
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Format email tidak valid',
+            'alamat.required' => 'Alamat wajib diisi',
+        ];
+        $validated = $this->validate($rules, $pesan);
+        ModelsEmployee::create($validated);
+        session()->flash('message', 'Data pegawai berhasil disimpan.');
+    }
+    public function render()
+    {
+        $data = ModelsEmployee::orderBy('nama', 'asc')->paginate(2);
+        return view('livewire.employee', ['dataEmployees' => $data]);
+    }
+}
