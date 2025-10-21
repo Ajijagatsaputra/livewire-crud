@@ -62,12 +62,18 @@
       <div class="my-3 p-3 bg-body rounded shadow-sm">
           <h1>Data Pegawai</h1>
           <div class="pb-3 pt-3">
-            <input type="text" class="form-control mb-3 w-25" placeholder="search..." wire:model.live="katakunci">
+              <input type="text" class="form-control mb-3 w-25" placeholder="search..." wire:model.live="katakunci">
           </div>
+
+          @if ($employee_selected_id)
+              <a wire:click="delete_confirmation('')" class="btn btn-danger btn-sm mb-3"
+                  data-bs-toggle="modal" data-bs-target="#exampleModal">Hapus {{ count($employee_selected_id) }}data</a>
+          @endif
           {{ $dataEmployees->links() }}
           <table class="table table-striped">
               <thead>
                   <tr>
+                      <th></th>
                       <th class="col-md-1">No</th>
                       <th class="col-md-4">Nama</th>
                       <th class="col-md-3">Email</th>
@@ -78,6 +84,9 @@
               <tbody>
                   @foreach ($dataEmployees as $key => $value)
                       <tr>
+                          <td><input type="checkbox" wire:key="{{ $value->id }}" value="{{ $value->id }}"
+                                  wire:model.live='employee_selected_id'>
+                          </td>
                           <td>{{ $dataEmployees->firstItem() + $key }}</td>
                           <td>{{ $value->nama }}</td>
                           <td>{{ $value->email }}</td>
@@ -96,7 +105,8 @@
       <!-- AKHIR DATA -->
 
       <!-- Modal -->
-      <div wire:ignore.self class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div wire:ignore.self class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+          aria-hidden="true">
           <div class="modal-dialog">
               <div class="modal-content">
                   <div class="modal-header">
@@ -104,11 +114,12 @@
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
                   <div class="modal-body">
-                        Apakah anda yakin ingin menghapus data ini?
+                      Apakah anda yakin ingin menghapus data ini?
                   </div>
                   <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tidak</button>
-                      <button type="button" class="btn btn-primary" wire:click="delete()" data-bs-dismiss="modal">Ya, Hapus</button>
+                      <button type="button" class="btn btn-primary" wire:click="delete()" data-bs-dismiss="modal">Ya,
+                          Hapus</button>
                   </div>
               </div>
           </div>
