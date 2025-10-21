@@ -17,6 +17,7 @@ class Employee extends Component
 
     public $updateData = false;
     public $employee_id;
+    public $katakunci;
 
 
     public function store()
@@ -90,12 +91,19 @@ class Employee extends Component
 
     public function delete_confirmation($id)
     {
-       $this->employee_id = $id;
+        $this->employee_id = $id;
     }
 
     public function render()
     {
-        $data = ModelsEmployee::orderBy('nama', 'asc')->paginate(2);
+        if ($this->katakunci != null) {
+            $data = ModelsEmployee::where('nama', 'like', '%' . $this->katakunci . '%')
+                ->orWhere('email', 'like', '%' . $this->katakunci . '%')
+                ->orWhere('alamat', 'like', '%' . $this->katakunci . '%')
+                ->orderBy('nama', 'asc')->paginate(5);
+        } else {
+            $data = ModelsEmployee::orderBy('nama', 'asc')->paginate(5);
+        }
         return view('livewire.employee', ['dataEmployees' => $data]);
     }
 }
