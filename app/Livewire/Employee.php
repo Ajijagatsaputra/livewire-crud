@@ -15,6 +15,9 @@ class Employee extends Component
     public $email;
     public $alamat;
 
+    public $updateData = false;
+    public $employee_id;
+
 
     public function store()
     {
@@ -32,7 +35,64 @@ class Employee extends Component
         $validated = $this->validate($rules, $pesan);
         ModelsEmployee::create($validated);
         session()->flash('message', 'Data pegawai berhasil disimpan.');
+
+        $this->clear();
     }
+
+    public function edit($id)
+    {
+        $data = ModelsEmployee::find($id);
+        $this->nama = $data->nama;
+        $this->email = $data->email;
+        $this->alamat = $data->alamat;
+
+        $this->updateData = true;
+        $this->employee_id = $id;
+    }
+
+    public function update()
+    {
+        $rules = [
+            'nama' => 'required',
+            'email' => 'required|email',
+            'alamat' => 'required',
+        ];
+        $pesan = [
+            'nama.required' => 'Nama wajib diisi',
+            'email.required' => 'Email wajib diisi',
+            'email.email' => 'Format email tidak valid',
+            'alamat.required' => 'Alamat wajib diisi',
+        ];
+        $validated = $this->validate($rules, $pesan);
+        $data = ModelsEmployee::find($this->employee_id);
+        $data->update($validated);
+        session()->flash('message', 'Data pegawai berhasil diupdate.');
+
+        $this->clear();
+    }
+
+    public function clear()
+    {
+        $this->nama = '';
+        $this->email = '';
+        $this->alamat = '';
+        $this->updateData = false;
+        $this->employee_id = '';
+    }
+
+    public function delete()
+    {
+        $id = $this->employee_id;
+        ModelsEmployee::find($id)->delete();
+        session()->flash('message', 'Data pegawai berhasil dihapus.');
+        $this->clear();
+    }
+
+    public function delete_confirmation($id)
+    {
+       $this->employee_id = $id;
+    }
+
     public function render()
     {
         $data = ModelsEmployee::orderBy('nama', 'asc')->paginate(2);
